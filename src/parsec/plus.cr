@@ -24,7 +24,7 @@ class Parsec::Plus(T,U) < Parsec::Parser(Array(T | U))
         if @products.size > 0
             Maybe.just(@products)
         else
-            Maybe.nothing
+            Maybe(Array(U | T)).nothing
         end
     end
 

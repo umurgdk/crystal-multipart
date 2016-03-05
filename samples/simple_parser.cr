@@ -7,8 +7,8 @@ require "../src/parsec/string"
 any_char = Parsec::Any.new("Empty string")
 read_through = Parsec::Many(Char).new(any_char)
 
-hello = Parsec::String.new "Hello"
-world = Parsec::String.new "World"
+hello = Parsec::StringParser.new "Hello"
+world = Parsec::StringParser.new "World"
 
 part1 = Parsec::Plus.new hello, world
 #part2 = Parsec::Plus.new part1, any_char

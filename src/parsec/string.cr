@@ -1,6 +1,6 @@
 require "./parser"
 
-class Parsec::String < Parsec::Parser(String)
+class Parsec::StringParser < Parsec::Parser(String)
     def initialize(@expectedString)
         super()
         @error_message = "expected string '#{@expectedString}'"
@@ -11,7 +11,7 @@ class Parsec::String < Parsec::Parser(String)
 
         if @cargo == @expectedString
             success
-        elsif @cargo.size >= @expectedString
+        elsif @cargo.size >= @expectedString.size
             fail
         end
     end
