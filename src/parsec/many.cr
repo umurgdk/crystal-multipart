@@ -11,12 +11,14 @@ class Parsec::Many(T) < Parsec::Parser(Array(T))
 
     def step(char : Char)
         @parser.step(char)
+        @cargo += char
 
         if @parser.failed? && @parsed_count == 0
             fail
         elsif @parser.failed?
             success
         elsif @parser.satisfied?
+            @cargo = ""
             product = @parser.produce
             if product.is_a?(Maybe::Just(T))
                 @products << product.content
@@ -24,8 +26,6 @@ class Parsec::Many(T) < Parsec::Parser(Array(T))
 
             @parser.reset
         end
-
-        @cargo += char
     end
 
     def produce

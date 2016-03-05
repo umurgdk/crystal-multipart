@@ -3,6 +3,7 @@ require "./parser"
 class Parsec::StringParser < Parsec::Parser(String)
     def initialize(@expectedString)
         super()
+        @index = 0
         @error_message = "expected string '#{@expectedString}'"
     end
 
@@ -13,10 +14,16 @@ class Parsec::StringParser < Parsec::Parser(String)
             success
         elsif @cargo.size >= @expectedString.size
             fail
+        elsif @expectedString[@index] != @cargo[@index]
+            fail
         end
     end
 
     def produce
-        Maybe.just(@cargo)
+        if @cargo == @expectedString
+            Maybe.just(@cargo)
+        else
+            Maybe(String).nothing
+        end
     end
 end

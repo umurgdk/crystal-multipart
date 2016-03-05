@@ -2,6 +2,7 @@ require "./maybe"
 
 abstract class Parsec::Parser(T)
     getter error_message
+    getter cargo
 
     def initialize
         @is_satisfied  = false

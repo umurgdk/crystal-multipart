@@ -5,19 +5,35 @@ class Parsec::Plus(T,U) < Parsec::Parser(Array(T | U))
     def initialize(@parser1 : Parsec::Parser(T), @parser2 : Parsec::Parser(U))
         super()
         @current_parser = @parser1
+        @sub_cargo = ""
         @products = [] of T | U
     end
 
     def step(char : Char)
+        @cargo += char
+
+        if @sub_cargo.size > 0
+            reader = Char::Reader.new(@sub_cargo)
+
+            while reader.has_next?
+                break unless sub_step(reader.current_char)
+                reader.next_char
+            end
+        end
+
+        sub_step(char)
+    end
+
+    def sub_step(char : Char)
         @current_parser.step(char)
 
         if @current_parser.satisfied?
             collect_product
         elsif @current_parser.failed?
+            @sub_cargo = @current_parser.cargo
+            @error_message = @current_parser.error_message + " got '#{@sub_cargo}'"
             collect_product(true)
         end
-
-        @cargo += char
     end
 
     def produce
@@ -35,11 +51,14 @@ class Parsec::Plus(T,U) < Parsec::Parser(Array(T | U))
 
             if @current_parser == @parser2
                 success
+                @cargo = ""
             else
                 @current_parser = @parser2
             end
+            true
         elsif fail_on_nothing
             fail
+            false
         end
     end
 end
